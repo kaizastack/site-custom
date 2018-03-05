@@ -1,0 +1,39 @@
+<stack:stack>
+
+	<stack:description>
+	site-custom cart backend appliance extensions
+	</stack:description>
+
+	<stack:package><!-- add packages here --></stack:package>
+
+<stack:script stack:stage="install-post">
+<stack:file stack:name="/etc/motd" stack:mode="append">
+Stack &version; (&release;)
+<stack:eval>
+echo "Profile built `date +'%H:%M %d-%b-%Y'`"
+</stack:eval>
+</stack:file>
+
+<stack:file stack:name="/tmp/time.sh" stack:mode="append" stack:perms="755">
+<stack:eval>
+echo "built=`date +'%s'`"
+</stack:eval>
+</stack:file>
+
+echo "Kickstarted `date +'%H:%M %d-%b-%Y'`" &gt;&gt; /etc/motd
+
+</stack:script>
+
+<stack:script stack:stage="boot-post">
+echo "Finished `date +'%H:%M %d-%b-%Y'`" &gt;&gt; /etc/motd
+echo "finis=`date +'%s'`" &gt;&gt; /tmp/time.sh
+
+<stack:file stack:name="/tmp/time.sh" stack:mode="append" stack:perms="755">
+installed=`echo "$(((finis - built)/60))"`
+echo "Installed in ${installed} minutes" &gt;&gt; /etc/motd
+</stack:file>
+
+/tmp/time.sh
+</stack:script>
+
+</stack:stack>
